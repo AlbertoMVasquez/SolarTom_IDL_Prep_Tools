@@ -1,4 +1,4 @@
-;;;
+;;
 ;
 ; Description:
 ;
@@ -38,13 +38,15 @@
 ; Optionally, define mask=[xmin,ymin,xmax,ymax] (in Rs units) to mask out a squared piece
 ; of the image, x being the horizontal axis and y the vertical one, with x=y=0 in crpix1,2. 
 ;
+; Select /pB or /Bk (simply for image title purposes).
+;
 ; The '*_prep.fts' images and the '*_prep.txt' list file are the ones used for tomography.
 ;
 ; Calling sequence examples:
 ;
 ; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/CR2219/',file_list='list.txt',r0=[3.0],mini=0.1,maxi=100.
 ;
-; lasco_mars_prep,data_dir='/data1/Downloads/FITS/',file_list='list_23910032.txt',mask=[4.5,4.05,4.95,4.4]
+; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test/',file_list='list_23910032.txt',mask=[4.5,4.05,4.95,4.4]
 ;
 ; HISTORY:  V1.0, Alberto M. Vasquez, IAFE, September-2019.
 ;           V1.1, Alberto M. Vasquez, IAFE, August-2020.
@@ -54,7 +56,7 @@
 ;;
 
 ; Main routine:
-pro lasco_mars_prep,data_dir=data_dir,file_list=file_list,r0=r0,mini=mini,maxi=maxi,rotate=rotate,mask=mask
+pro lasco_mars_prep,data_dir=data_dir,file_list=file_list,r0=r0,mini=mini,maxi=maxi,rotate=rotate,mask=mask,pB=pB,Bk=Bk
   if not keyword_set(r0)   then r0 = [2.5,6.0]
   if not keyword_set(mini) then mini = 0.1
   if not keyword_set(maxi) then maxi = 50.
@@ -86,9 +88,6 @@ pro lasco_mars_prep,data_dir=data_dir,file_list=file_list,r0=r0,mini=mini,maxi=m
      print,'roll angle offset: ',hdr.rollangl
 
      prep_image_and_header,hdr=hdr,img=img
-    ;Make -666 all null pixels.
-    ;izero = where(img eq 0.)
-    ;if izero(0) ne -1. then img(izero) = -666.
      if keyword_set(mask) then begin
         compute_image_grid,hdr=hdr,ra=ra,pa=pa,x=x,y=y,instrument='lascoc2_lam'
         u  = 1. + fltarr(hdr.naxis1)
@@ -103,9 +102,7 @@ pro lasco_mars_prep,data_dir=data_dir,file_list=file_list,r0=r0,mini=mini,maxi=m
      endif
      mwritefits,hdr,img,outfile=data_dir+new_filename
      printf,2,new_filename
-;    if i eq 0 then  window,0,xs=hdr.naxis1,ys=hdr.naxis1
-     lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=new_filename,mini=mini,maxi=maxi,ii=i
-     print,'Note that LASCO-C2 LAM images must be provided to tom codes in units of [1E-10*Bsun]'
+     lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=new_filename,mini=mini,maxi=maxi,pB=pB,Bk=Bk
   endfor
   close,/all
 ; stop
@@ -153,20 +150,22 @@ pro prep_image_and_header,hdr=hdr,img=img
   Rsun_arcsec = Rsun_deg * 3600.
   Rsun_px     = hdr.rsun_pix
   px_arcsec   = Rsun_arcsec / Rsun_px
-  print, '==> PIXSIZE =', px_arcsec,' arcsec, differing from the canonical value 23.8 by',100.*(px_arcsec-23.8)/23.8,' %'
-  if 100.*(px_arcsec-23.8)/23.8 ge 0.01 then begin
+  px_arcsec_ref = 23.8 ; reference value
+  percent_difference = 100.*(px_arcsec-px_arcsec_ref)/px_arcsec_ref
+  print, '==> PIXSIZE =', px_arcsec,' arcsec, differing from the reference value by',percent_difference,' %'
+  if percent_difference ge 0.01 then begin
      print, 'which is larger than 0.01%. Something is not correct.'
      stop
   endif
 
-  PIXSIZE     = 23.8
+  PIXSIZE     = 23.8 ; --> px_arcsec
   CENTER_X    = HDR.XSUN_MED + 1      ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
   CENTER_Y    = HDR.YSUN_MED + 1      ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
   ROLL_OFFSET = HDR.ROLLANGL * (-1.)  ; LAM uses for their hdr.rollangl keyword the opposite convention to the one expected by our tomography code.
   DSUN_OBS    = HDR.DSUN
   OBSLAT      = HDR.CRLT_OBS 
   CARLONG     = HDR.CRLN_OBS 
-  QLIMB       = 0.54
+  QLIMB       = 0.54 ; limb-darkening coeff for C2 (580-640 nm band)
 
 ; Change image units from their original [1E-10*Bsun_mean] units to the tomography codes expected [1E-10*Bsun_center] units:
   IMG         = (1.-QLIMB/3) * IMG
@@ -188,7 +187,7 @@ pro prep_image_and_header,hdr=hdr,img=img
   return
 end
 
-pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename,mini=mini,maxi=maxi,ii=ii
+pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename,mini=mini,maxi=maxi,pB=pB,Bk=Bk
 
 ; Compute the image grid
   compute_image_grid,hdr=hdr,ra=ra,pa=pa,x=x,y=y,instrument='lascoc2_lam'
@@ -204,7 +203,7 @@ pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename
      ring = where(ra ge r0[ir]-dr/2. and ra le r0[ir]+dr/2.)
      img2(ring) = maxi          ;max(img)
     ps1,data_dir+filename+'_PA_profile.'+strmid(string(r0[ir]),6,5)+'.eps',0
-    display_PA_profiles,height=r0[ir],hdr=hdr,img=img,ra=ra,pa=pa,x=x,y=y
+    display_PA_profiles,height=r0[ir],hdr=hdr,img=img,ra=ra,pa=pa,x=x,y=y,pB=pB,Bk=Bk
     ps2
   endfor
 
@@ -255,8 +254,6 @@ pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename
  xyouts,0.65,0.95,'D!DSUN!N = '+dsun_str+' au',charsize=2,/normal,charthick=2,font=1
  xyouts,0.01,0.01,'Lat = '+sg_lat_string+lat_string+' deg',charsize=2,/normal,charthick=2,font=1
  xyouts,0.62,0.01,'Lon = '+lon_string+' deg',charsize=2,/normal,charthick=2,font=1
-;record_gif,data_dir,filename+'_image.gif','X'
-;record_jpg,data_dir,filename+'_image.jpg'
  nname = strlen(filename)
  record_jpg_zbuff,data_dir,strmid(filename,0,nname-4)+'.jpg'
 
@@ -267,7 +264,7 @@ pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename
  return
 end
 
-pro display_PA_profiles,height=height,hdr=hdr,img=img,ra=ra,pa=pa,x=x,y=y
+pro display_PA_profiles,height=height,hdr=hdr,img=img,ra=ra,pa=pa,x=x,y=y,pB=pB,Bk=Bk
 
 if not keyword_set(height) then begin
    print,'please specify height.'
@@ -291,10 +288,13 @@ endfor
  mini = max([min(da),-1.])
  maxi = max(da)
 
+ if keyword_set(pB) then radiance_type = 'pB'
+ if keyword_set(Bk) then radiance_type = 'Bk'
+
  !p.charsize=1
  plot,t0a/!dtor,da ,xstyle=1,yr=[mini,maxi],/nodata,$
       xtitle = 'PA [deg]',$
-      title  = 'LASCO-C2 LAM pB ['+hdr.PREPUNIT+'] at '+strmid(string(height),6,4)+' R!DSUN!N'
+      title  = 'LASCO-C2 LAM '+radiance_type+' ['+hdr.PREPUNIT+'] at '+strmid(string(height),6,4)+' R!DSUN!N'
  loadct,12
  blue  = 100
  red   = 200
@@ -304,4 +304,3 @@ endfor
  
 return
 end
-
