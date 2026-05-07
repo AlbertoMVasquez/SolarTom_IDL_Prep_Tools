@@ -165,7 +165,7 @@ pro prep_image_and_header,hdr=hdr,img=img
   DSUN_OBS    = HDR.DSUN
   OBSLAT      = HDR.CRLT_OBS 
   CARLONG     = HDR.CRLN_OBS 
-  QLIMB       = 0.54 ; limb-darkening coeff for C2 (580-640 nm band)
+  QLIMB       = 0.54 ; limb-darkening coeff for C2 (580-640 nm band) 
 
 ; Change image units from their original [1E-10*Bsun_mean] units to the tomography codes expected [1E-10*Bsun_center] units:
   IMG         = (1.-QLIMB/3) * IMG
