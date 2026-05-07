@@ -42,11 +42,9 @@
 ;
 ; The '*_prep.fts' images and the '*_prep.txt' list file are the ones used for tomography.
 ;
-; Calling sequence examples:
+; Calling sequence example:
 ;
-; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/CR2219/',file_list='list.txt',r0=[3.0],mini=0.1,maxi=100.,/pB
-;
-; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test/',file_list='list_23910032.txt',mask=[4.5,4.05,4.95,4.4],/pB
+; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test_Philippe/',file_list='list.txt',/pB
 ;
 ; HISTORY:  V1.0, Alberto M. Vasquez, IAFE, September-2019.
 ;           V1.1, Alberto M. Vasquez, IAFE, August-2020.

@@ -17,3 +17,5 @@ The main purpose of lasco_mars_prep.pro is to expand the header of the C2 images
                        'PREPUNIT'   ,PREPUNIT    )      (1E-10*Bsun_center)
 
 (**) This is the sign convention adopted in the original tomography codes by Rich, which we kept. As the Legacy C2 headers have the opposite convention note we invert its sign in our PREP tool. Philippe: your tomography code of course may assume the opposite convention.  If so you may want to edit this prep tool, specifically eliminate the "-1"factor in Ln 162, where ROLL_OFFSET is defined.
+
+The ZIP file in this repo contrains the result of running the example calling sequence on the image 23904500pB.fts (also included in the zip file).
