@@ -36,7 +36,7 @@
 ; Optionally, choose to /rotate to get *prep.fts images with north-up.  
 ;
 ; Optionally, define mask=[xmin,ymin,xmax,ymax] (in Rs units) to mask out a squared piece
-; of the image, x being the horizontal axis and y the vertical one, with x=y=0 in crpix1,2. 
+; of the image, x being the horizontal axis and y the vertical one, with x=y=0 in the Disk center. 
 ;
 ; Select /pB or /Bk (simply for image title purposes).
 ;
@@ -44,9 +44,9 @@
 ;
 ; Calling sequence examples:
 ;
-; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/CR2219/',file_list='list.txt',r0=[3.0],mini=0.1,maxi=100.
+; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/CR2219/',file_list='list.txt',r0=[3.0],mini=0.1,maxi=100.,/pB
 ;
-; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test/',file_list='list_23910032.txt',mask=[4.5,4.05,4.95,4.4]
+; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test/',file_list='list_23910032.txt',mask=[4.5,4.05,4.95,4.4],/pB
 ;
 ; HISTORY:  V1.0, Alberto M. Vasquez, IAFE, September-2019.
 ;           V1.1, Alberto M. Vasquez, IAFE, August-2020.
@@ -105,7 +105,6 @@ pro lasco_mars_prep,data_dir=data_dir,file_list=file_list,r0=r0,mini=mini,maxi=m
      lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=new_filename,mini=mini,maxi=maxi,pB=pB,Bk=Bk
   endfor
   close,/all
-; stop
   return
 end
 
@@ -143,7 +142,6 @@ pro prep_image_and_header,hdr=hdr,img=img
   
   ; Define C-named variables, even if redundant 
   IMSIZE      = double(HDR.NAXIS1)
- ;PIXSIZE     = HDR.CDELT1  // CDELT1 is not present in LAM headers.
  ;Calculation of PIXSIZE:
   Rsun_rad    = (1./hdr.R_SOHO)
   Rsun_deg    = Rsun_rad/!dtor
@@ -158,10 +156,10 @@ pro prep_image_and_header,hdr=hdr,img=img
      stop
   endif
 
-  PIXSIZE     = 23.8 ; --> px_arcsec
-  CENTER_X    = HDR.XSUN_MED + 1      ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
-  CENTER_Y    = HDR.YSUN_MED + 1      ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
-  ROLL_OFFSET = HDR.ROLLANGL * (-1.)  ; LAM uses for their hdr.rollangl keyword the opposite convention to the one expected by our tomography code.
+  PIXSIZE     = PX_ARCSEC_REF
+  CENTER_X    = HDR.XSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
+  CENTER_Y    = HDR.YSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
+  ROLL_OFFSET = HDR.ROLLANGL * (-1.) ; LAM uses for their hdr.rollangl keyword the opposite convention to the one expected by our tomography code.
   DSUN_OBS    = HDR.DSUN
   OBSLAT      = HDR.CRLT_OBS 
   CARLONG     = HDR.CRLN_OBS 
@@ -226,7 +224,7 @@ pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename
  dsun = hdr.dsun/AU             ; au 
  crln = hdr.crln_obs            ; deg
  crlt = hdr.crlt_obs            ; deg
- 
+
 ; Round numbers to be displayed in the image visualization. 
  f1 = 10.d
  f2 = 100.d
