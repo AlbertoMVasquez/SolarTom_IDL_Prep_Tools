@@ -11,12 +11,12 @@ List of variables created by the prep tool.
                        'PIXSIZE'    ,PIXSIZE    ,$      (arcsec)
                        'CENTER_X'   ,CENTER_X   ,$      (pixels)
                        'CENTER_Y'   ,CENTER_Y   ,$      (pixels)
-                       'ROLL'       ,ROLL_OFFSET,$      (deg, positive clockwise) (**)
+                       'ROLL'       ,ROLL       ,$      (deg, positive clockwise) (**)
                        'DSUN_OBS'   ,DSUN_OBS   ,$      (m)
                        'OBSLAT'     ,OBSLAT     ,$      (deg)
                        'CARLONG'    ,CARLONG    ,$      (deg)
                        'PREPUNIT'   ,PREPUNIT    )      (1E-10*Bsun_center)
 
-(**) This is the sign convention adopted in the original tomography codes by Rich, which we kept. As the Legacy C2 headers have the opposite convention note we invert its sign in our PREP tool. Philippe: your tomography code of course may assume the opposite convention.  If so you may want to edit this prep tool, specifically eliminate the "-1"factor in Ln 162, where ROLL_OFFSET is defined.
+(**) This is the sign convention adopted in the original tomography codes by Rich, which we kept. As the Legacy C2 headers have the opposite convention, we the "-1" factor in Ln 162, where ROLL is defined.
 
 The ZIP file in this repo contrains the result of running the example calling sequence on the image 23904500pB.fts (also included in the zip file).
