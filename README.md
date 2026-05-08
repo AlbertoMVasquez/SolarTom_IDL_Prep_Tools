@@ -1,6 +1,6 @@
 # SolarTom_IDL_Prep_Tools
 
-Philippe,
+Dear Philippe,
 
 The main purpose of lasco_mars_prep.pro is to expand the header of the C2 images, adding the ten (10) variables listed below. It also generates visualisation of the image, and other plots. The variables that are created are the ones used by our tomography codes. A similar prep tool exists for other instruments (metis, aspiics, kcor/mk4, etc.), doing a similar job. The idea behind this implementation was to eliminate (nearly all) instrument-based decisions within the tomography codes. Give this one a try and let us know if useful to you. If you would like to have a similar tool for another instrument let us know and we will add it here.
 
