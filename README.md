@@ -6,7 +6,7 @@ The main purpose of lasco_mars_prep.pro is to expand the header of the C2 images
 
 List of variables created by the prep tool.
 
-                       'QLIMB'      ,QLIMB      ,$	(limb darkening factor)
+                       'QLIMB'      ,QLIMB      ,$      (limb darkening factor)
                        'IMSIZE'     ,IMSIZE     ,$      (pixels)
                        'PIXSIZE'    ,PIXSIZE    ,$      (arcsec)
                        'CENTER_X'   ,CENTER_X   ,$      (pixels)
