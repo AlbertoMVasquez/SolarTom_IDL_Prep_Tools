@@ -34,22 +34,16 @@
 ;
 ; OUTPUT of this code: In the same directory where the data is located, the
 ; new data (*_preptom.fts) and list file (*_preptom.txt), as well as
-; *preptom.jpg images and *preptom*eps plots, are generated.
+; *_preptom.jpg images and *_preptom*eps plots, are generated.
 ;
 ; The '*_preptom.fts' images are the ones we use for tomography.
-;
-; Note that the ORDER of the prepared image filenames in the '*_preptom.txt'
-; follows the order of the original files in list.txt, typically not chronological.
-; The filenames of the &preptom.fts files produced by this tool start with
-; DATE+UT. After running this tool, a chronologically ordered list can be simply
-; generated with the terminal command line:
-; ls *_prep.fts > list_prep.txt
 ;
 ; HISTORY:  V1.0, Alberto M. Vasquez, IAFE, September-2019.
 ;           V1.1, Alberto M. Vasquez, IAFE, August-2020.
 ;           V1.2, Alberto M. Vasquez, IAFE, September-2020.
 ;           V1.3, Alberto M. Vasquez, IAFE, February-2026.
 ;           V1.4, Alberto M. Vasquez, IAFE, May-2026.
+;           V1.5, Alberto M. Vasquez, IAFE, May-2026.
 ;;
 
 ; Main routine:
