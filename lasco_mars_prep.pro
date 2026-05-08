@@ -154,14 +154,14 @@ pro prep_image_and_header,hdr=hdr,img=img
      stop
   endif
 
-  PIXSIZE     = PX_ARCSEC_REF
-  CENTER_X    = HDR.XSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
-  CENTER_Y    = HDR.YSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
-  ROLL_OFFSET = HDR.ROLLANGL * (-1.) ; LAM uses for their hdr.rollangl keyword the opposite convention to the one expected by our tomography code.
-  DSUN_OBS    = HDR.DSUN
-  OBSLAT      = HDR.CRLT_OBS 
-  CARLONG     = HDR.CRLN_OBS 
-  QLIMB       = 0.54 ; limb-darkening coeff for C2 (580-640 nm band) 
+  PIXSIZE  = PX_ARCSEC_REF
+  CENTER_X = HDR.XSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
+  CENTER_Y = HDR.YSUN_MED + 1     ; LAM uses start-by-0 convention, while the tom codes expect the start-by-1 FITS convention. 
+  ROLL     = HDR.ROLLANGL * (-1.) ; LAM uses for their hdr.rollangl keyword the opposite convention to the one expected by our tomography code.
+  DSUN_OBS = HDR.DSUN
+  OBSLAT   = HDR.CRLT_OBS 
+  CARLONG  = HDR.CRLN_OBS 
+  QLIMB    = 0.54 ; limb-darkening coeff for C2 (580-640 nm band) 
 
 ; Change image units from their original [1E-10*Bsun_mean] units to the tomography codes expected [1E-10*Bsun_center] units:
   IMG         = (1.-QLIMB/3) * IMG
@@ -174,7 +174,7 @@ pro prep_image_and_header,hdr=hdr,img=img
                        'PIXSIZE'    ,PIXSIZE    ,$
                        'CENTER_X'   ,CENTER_X   ,$
                        'CENTER_Y'   ,CENTER_Y   ,$
-                       'ROLL'       ,ROLL_OFFSET,$
+                       'ROLL'       ,ROLL       ,$
                        'DSUN_OBS'   ,DSUN_OBS   ,$
                        'OBSLAT'     ,OBSLAT     ,$
                        'CARLONG'    ,CARLONG    ,$
