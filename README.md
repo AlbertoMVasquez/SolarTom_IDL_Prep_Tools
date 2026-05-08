@@ -17,6 +17,6 @@ List of variables created by the prep tool.
                        'CARLONG'    ,CARLONG    ,$      (deg)
                        'PREPUNIT'   ,PREPUNIT    )      (1E-10*Bsun_center)
 
-(**) This is the sign convention adopted in the original tomography codes by Rich, which we kept. As the Legacy C2 headers have the opposite convention, we the "-1" factor in Ln 162, where ROLL is defined.
+(**) This is the sign convention adopted in the original tomography codes by Rich, which we kept. As the Legacy C2 headers have the opposite convention for ROLLANGL, we include the "-1" factor in Ln 162, where ROLL is defined.
 
 The ZIP file in this repo contrains the result of running the example calling sequence on the image 23904500pB.fts (also included in the zip file).
