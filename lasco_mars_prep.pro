@@ -9,42 +9,41 @@
 ; This code calls other routines contained in this same file.
 ; Compile '.r lasco_mars_prep' before use, to make all routines user-available.
 ;
+; Calling sequence example:
+; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test_Philippe/',file_list='list.txt',/pB
+;
+; Explanation:
+;
 ; Data must be stored in directory 'data_dir', where the file list
 ; 'file_list' contains the number of data files in the first line
-; and their names (one per row). The 1D array 'r0' lists the 
-; elongations [Rs] at which intensitity-versus-PA plots will be generated.
+; followed by all their filenames (one per line).
+;
+; Specify /pB or /Bk (simply for image title purposes). There is no default value.
+;
+; Specify a 1D array 'r0' with the elongations [Rs] at which intensity-versus-PA
+; plots will be generated. Default value is r0 = [2.5,6.0].
 ;
 ; Specify suitable MINI and MAXI intensity values to be enforced accross
 ; the visualization of all images in the list, to share a common color scale.
 ; Default values are mini = 0.1, maxi = 50.
-;
-; Specify an elongation [Rs] 1D array. Default value is r0 = [2.5,6.0]
-;
-; Specify elongations r0 [Rs] as a 1D-array. If not, default value is 
-; As a result, in the same directory where the data is located, the
-; new data (*_prep.fts) list file (*_prep.txt), as well as *.gif images
-; and *.eps plots, are generated.
-;
-; The '*_prep.fts' images are the ones to be used for tomography.
-; Note that the ORDER of the prepared image filenames in the '*_prep.txt'
-; list may not be chronological, because their filenames are not.
-; The filenames of the prep files produced by this tool start with
-; DATE+UT. After running this tool, generate a chronologically
-; ordered list with the terminal command line:
-; ls *_prep.fts > list_prep.txt
 ;
 ; Optionally, choose to /rotate to get *prep.fts images with north-up.  
 ;
 ; Optionally, define mask=[xmin,ymin,xmax,ymax] (in Rs units) to mask out a squared piece
 ; of the image, x being the horizontal axis and y the vertical one, with x=y=0 in the Disk center. 
 ;
-; Select /pB or /Bk (simply for image title purposes).
+; OUTPUT of this code: In the same directory where the data is located, the
+; new data (*_preptom.fts) and list file (*_preptom.txt), as well as
+; *preptom.jpg images and *preptom*eps plots, are generated.
 ;
-; The '*_prep.fts' images and the '*_prep.txt' list file are the ones used for tomography.
+; The '*_preptom.fts' images are the ones we use for tomography.
 ;
-; Calling sequence example:
-;
-; lasco_mars_prep,data_dir='/data1/tomography/DATA/c2/Test_Philippe/',file_list='list.txt',/pB
+; Note that the ORDER of the prepared image filenames in the '*_preptom.txt'
+; follows the order of the original files in list.txt, typically not chronological.
+; The filenames of the &preptom.fts files produced by this tool start with
+; DATE+UT. After running this tool, a chronologically ordered list can be simply
+; generated with the terminal command line:
+; ls *_prep.fts > list_prep.txt
 ;
 ; HISTORY:  V1.0, Alberto M. Vasquez, IAFE, September-2019.
 ;           V1.1, Alberto M. Vasquez, IAFE, August-2020.
@@ -211,12 +210,12 @@ pro lasco_mars_inspect,hdr=hdr,img=img,r0=r0,data_dir=data_dir,filename=filename
 ; Load color table
   loadct,39
 
-; Set common INI and MAXI values for visualization of all images, and assign MAXI to all pixels in the disk. 
+; Set common MINI and MAXI values for visualization of all images, and assign MAXI to all pixels in the disk. 
   img2(0,0) = mini
-  img2(0.1) = maxi
+  img2(0,1) = maxi
   disk       = where(ra le 1.)
   img2(disk) = maxi
-  tvscl,alog10(img2  > mini < maxi ),0
+  tvscl, alog10(img2 > mini < mai), 0
 
  AU   = 149.597870700e9         ; m 
  dsun = hdr.dsun/AU             ; au 
